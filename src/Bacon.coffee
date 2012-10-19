@@ -579,8 +579,12 @@ class Property extends Observable
     new Property(new PropertyDispatcher(@subscribe, handler).subscribe)
   withSubscribe: (subscribe) -> new Property(new PropertyDispatcher(subscribe).subscribe)
   toProperty: => this
-  and: (other) -> @combine(other, (x, y) -> x && y)
-  or:  (other) -> @combine(other, (x, y) -> x || y)
+  and: (props...) =>
+    props.unshift(this)
+    Bacon.combineWith(props, (x, y) -> x && y)
+  or:  (props...) =>
+    props.unshift(this)
+    Bacon.combineWith(props, (x, y) -> x || y)
 
 class Dispatcher
   constructor: (subscribe, handleEvent) ->
